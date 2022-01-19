@@ -1,0 +1,261 @@
+//Fråga 1: Använd en databas med namn myDB.
+use myDB
+Detta är responsen på kommandot : switched to db myDB  
+
+
+
+//Fråga 2: Skapa ett dokument med innehåll FirstName: ”Selma”,
+//LastName: Lagerlöf och sätt in det i en kollektion med namn ”authors”.
+db.authors.insertOne({FirstName: "Selma", LastName: "Lagerlöf"})
+Detta är responsen :
+{
+    "acknowledged": true,
+    "insertedId": ObjectId("61d4a125a066a73e3e470b44")
+}
+
+
+
+//Fråga 3: Lägg till ytterligare ett dokument i ”authors” med
+// FirstName: ”August”, LastName: ”Bondeson”, Birth: 1854.
+db.authors.insertOne({FirstName: "August", LastName: "Bondeson", Birth: 1854})
+Detta är responsen :
+{
+    "acknowledged": true,
+    "insertedId": ObjectId("61d4a14aa066a73e3e470b45")
+}
+
+
+
+//Fråga 4: Uppdatera dokumentet för August Bondeson och lägg till Death: 1906.
+db.authors.updateOne({FirstName: "August"}, {$set: {Death: 1906} })
+Detta är responsen :
+{
+    acknowledged: true,
+    insertedId: null,
+    matchedCount: 1,
+    modifiedCount: 1,
+    upsertedCount: 0
+}
+
+
+
+//Fråga 5: Lägg till ytterligare författare i ”authors” genom att köra 
+//kommandot load(”addAuthors.js”) från mongo Shell. (Ladda ner filen).
+db.authors.insertMany([
+    {
+        "FirstName": "Astrid",
+        "LastName": "Lindgren",
+        "Birth": 1907,
+        "Death": 2002,
+        "Books": [
+            "Bröderna Lejonhjärta",
+            "Här kommer Pippi Långstrump",
+            "Mio min Mio"
+        ]
+    },
+    {
+        "FirstName": "Hjalmar",
+        "LastName": "Söderberg",
+        "Birth": 1869,
+        "Death": 1941,
+        "Books": [
+            "Den allvarsamma leken",
+            "Martin Bircks ungdom",
+            "Doktor Glas"
+        ]
+    },
+    {
+        "FirstName": "Karin",
+        "LastName": "Boye",
+        "Birth": 1900,
+        "Death": 1941,
+        "Books": [
+            "Samlade dikter",
+            "Kallocain"
+        ]
+    },
+    {
+        "FirstName": "August",
+        "LastName": "Strindberg",
+        "Birth": 1849,
+        "Death": 1912,
+        "Books": [
+            "Hemsöborna",
+            "Röda rummet"
+        ]
+    }
+])
+Detta är responsen :
+{
+    acknowledged: true,
+    insertedIds: {
+        '0': ObjectId("61d4a1e9a066a73e3e470b46"),
+        '1': ObjectId("61d4a1e9a066a73e3e470b47"),
+        '2': ObjectId("61d4a1e9a066a73e3e470b48"),
+        '3': ObjectId("61d4a1e9a066a73e3e470b49")
+    }
+}
+
+
+
+//Fråga 6: Räkna hur många dokument det finns totalt i ”authors”.
+db.authors.countDocuments()
+Detta är responsen : 6
+
+
+
+//Fråga 7: Räkna hur många författare som heter August i förnamn.
+db.authors.countDocuments({FirstName: "August"})
+Detta är responsen : 2
+
+
+
+//Fråga 8: Lägg till Birth: 1858 och Death: 1940 för Selma Lagerlöf.
+db.authors.updateOne({FirstName: "Selma"}, {$set: {Birth: 1858, Death: 1940} })
+Detta är responsen : 
+{
+    acknowledged: true,
+    insertedId: null,  
+    matchedCount: 1,   
+    modifiedCount: 1,  
+    upsertedCount: 0   
+}
+
+
+
+//Fråga 9: Lägg till en array ”Books” för Selma Lagerlöf med följande böcker:
+// ”Gösta Berlings saga”, ”En herrgårdssägen”, 
+//”Nils Holgerssons underbara resa genom Sverige”.
+db.authors.updateMany({FirstName: "Selma"}, {$push: {Books: ["Gösta Berlings saga", "En herrgårdssägen", 
+"Nils Holgerssons underbara resa genom Sverige"]}})
+Detta är responsen : 
+{
+    acknowledged: true,
+    insertedId: null,  
+    matchedCount: 1,   
+    modifiedCount: 1,  
+    upsertedCount: 0   
+}
+ 
+
+
+//Fråga 10: Lägg till boken ”Vi på Saltkråkan” bland Astrid Lindgrens böcker.
+db.authors.updateOne({FirstName: "Astrid"}, {$push: {Books: "Vi på Saltkråkan"} })
+Detta är responsen : 
+{
+    acknowledged: true,
+    insertedId: null,  
+    matchedCount: 1,   
+    modifiedCount: 1,  
+    upsertedCount: 0   
+}
+
+
+
+//Fråga 11: Ta bort boken ”Bröderna Lejonhjärta” från Astrid Lindgrens böcker.
+db.authors.updateOne({FirstName: "Astrid"}, {$pull: {Books: "Bröderna Lejonhjärta"} })
+Detta är responsen:
+{
+    acknowledged: true,
+    insertedId: null,  
+    matchedCount: 1,   
+    modifiedCount: 1,  
+    upsertedCount: 0   
+}
+
+
+
+//Fråga 12: Visa dokument för de författare som dog år 2000 eller senare.
+db.authors.find({Death: {$gte: 2000}})
+Detta är responsen:
+{
+    _id: ObjectId("61d4a1e9a066a73e3e470b46"),
+    FirstName: 'Astrid',
+    LastName: 'Lindgren',
+    Birth: 1907,
+    Death: 2002,
+    Books: [
+      'Här kommer Pippi Långstrump',
+      'Mio min Mio',
+      'Vi på Saltkråkan'
+    ]
+}
+
+
+
+//Fråga 13: Räkna hur många författare som dog på 1940-talet.
+db.authors.countDocuments({Death: {$gte: 1940, $lte: 1949} })
+Detta är responsen: 3
+
+
+
+
+//Fråga 14: Visa endast attributen FirstName, LastName och Death för de författare som dog på 1940-talet.
+db.authors.find({Death: {$gte: 1940, $lte: 1949}},{FirstName:1, LastName:1, Death:1})
+Detta är responsen:
+{
+    _id: ObjectId("61d4a125a066a73e3e470b44"),
+    FirstName: 'Selma',
+    LastName: 'Lagerlöf',
+    Death: 1940
+  },
+  {
+    _id: ObjectId("61d4a1e9a066a73e3e470b47"),
+    FirstName: 'Hjalmar',
+    LastName: 'Söderberg',
+    Death: 1941
+  },
+  {
+    _id: ObjectId("61d4a1e9a066a73e3e470b48"),
+    FirstName: 'Karin',
+    LastName: 'Boye',
+    Death: 1941
+}
+
+
+
+//Fråga 15: Lägg till Gender: ”Male” i dokument med FirstName = ”Hjalmar”.
+db.authors.updateMany({FirstName: "Hjalmar"}, {$set: {Gender: "Male"} })
+Detta är responsen:
+{
+    acknowledged: true,
+    insertedId: null,  
+    matchedCount: 1,   
+    modifiedCount: 1,  
+    upsertedCount: 0   
+}
+
+
+
+//Fråga 16: Lägg till Gender: ”Female” i dokument där FirstName är Astrid, Karin eller Selma.
+db.authors.updateMany({$or: [{FirstName:"Astrid"}, {FirstName:"Karin"},{FirstName:"Selma"}]}, {$set:{Gender:"Female"} })
+Detta är responsen:
+{
+    acknowledged: true,
+    insertedId: null,
+    matchedCount: 3,
+    modifiedCount: 3,
+    upsertedCount: 0
+  }
+
+
+
+//Fråga 17: Ta bort arrayen Books från dokumentet med August Strindberg.
+db.authors.updateOne({FirstName: "August", LastName:"Strindberg"},{$unset: {Books:""}} )
+Detta är responsen:
+{
+    acknowledged: true,
+    insertedId: null,
+    matchedCount: 1,
+    modifiedCount: 1,
+    upsertedCount: 0
+}
+
+
+
+//Fråga 18: Ta bort dokumenten där FirstName = ”August”.
+db.authors.deleteMany({FirstName:"August"})
+Detta är responsen:
+{ acknowledged: true, deletedCount: 2 }
+
+
